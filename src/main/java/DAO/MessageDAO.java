@@ -34,7 +34,7 @@ public class MessageDAO {
         }
         return null;
     }
-    public List<Message> retriveAllMessage(Message m){
+    public List<Message> retriveAllMessage(){
         List<Message> messages = new ArrayList<>();
         Connection connection = ConnectionUtil.getConnection();
         try {

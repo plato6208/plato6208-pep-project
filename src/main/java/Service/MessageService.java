@@ -28,9 +28,9 @@ public class MessageService {
         }
     }
 
-    public List<Message> retriveAllMessages(Message m) {
+    public List<Message> retriveAllMessages() {
         List<Message> mess = new ArrayList<>();
-        mess.addAll(messageDAO.retriveAllMessage(m));
+        mess.addAll(messageDAO.retriveAllMessage());
         return mess;
     }
 
