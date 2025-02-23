@@ -19,10 +19,17 @@ public class AccountService {
 
     //get account, return null if no user and returns a user if it they exist
     public Account getAccount(Account a) {
-        return null;
+        Account ret = accService.getAccount(a);
+        return ret;
     }
-    
-    public Account createAccount(Account a) {
-        return null;
+    //create a user and returns new user info
+    public Account createAccount(Account a, String username, String passoword) {
+        //check to see if username is blank or username already exist
+        if(username == " " || username == a.getUsername()) {
+            return null;
+        } else {
+            Account acc = accService.createAccount(a);
+            return acc;
+        }
     }
 }

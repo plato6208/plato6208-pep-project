@@ -15,7 +15,7 @@ public class MessageDAO {
     //update message text identified by its message id
     //retrieve all messages by particular user
 
-    public Message creatMessage(Message m){
+    public Message createMessage(Message m){
         Connection connection = ConnectionUtil.getConnection();
         try {
             String sql = "insert into Message (posted_by, message_text, time_posted_epoch) values (?,?,?)";
@@ -73,32 +73,67 @@ public class MessageDAO {
         }
         return null;
     }
-    public void deleteMessage(Message m) {
+    public Message deleteMessage(int id) {
         Connection connection = ConnectionUtil.getConnection();
+        Message m = null;
         try {
-            String sql = "delete from Message where message_id = ?";
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, m.getMessage_id());
-            ps.executeUpdate();
+            //check to see if message exist
+            String check  = "Select * from Message where message_id = ?";
+            PreparedStatement ps1 = connection.prepareStatement(check);
+            ps1.setInt(1,id);
+            ResultSet rs1 = ps1.executeQuery();
+            if(rs1.next()) {
+                m = new Message(rs1.getInt("message_id"),
+                rs1.getInt("posted_by"),
+                rs1.getString("message_text"),
+                rs1.getLong("time_posted_epoch"));
+            }
+
+            if(m != null) {
+                String sql = "delete from Message where message_id = ?";
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            }
         } catch(SQLException e) {
             System.out.println("message not found");
         }
-
+        return m;
     }
-    public void updateMessage(String mes, int id){
+    public Message updateMessage(String mes, int id){
+        Message mess = null;
         Connection connection = ConnectionUtil.getConnection();
         try {
+            //check to see if message exist
+            String check  = "Select * from Message where message_id = ?";
+            PreparedStatement ps1 = connection.prepareStatement(check);
+            ps1.setInt(1,id);
+            ResultSet rs1 = ps1.executeQuery();
+            if(!rs1.next()) {
+                return null;
+            }
+
             String sql = "update from Message set message_text = ? where message_id = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, mes);
             ps.setInt(2, id);
-            ps.executeUpdate();
+            int rowUpdated = ps.executeUpdate();
+            if(rowUpdated > 0) {
+                ResultSet rs = ps.executeQuery();
+                if(rs.next()) {
+                    mess = new Message(rs.getInt("message_id"),
+                    rs.getInt("posted_by"),
+                    rs.getString("message_text"),
+                    rs.getLong("time_posted_epoch"));
+                }
+            }
         } catch(SQLException e) {
             System.out.println("message not found");
         }
+        return mess;
     }
 
-    public List<Message> userMessage(int posted_by) {
+    public List<Message> userIDMessage(int posted_by) {
         List<Message> messages = new ArrayList<>();
         Connection connection = ConnectionUtil.getConnection();
         try {
