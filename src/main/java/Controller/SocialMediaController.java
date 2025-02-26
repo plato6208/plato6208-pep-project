@@ -24,7 +24,8 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.get("/login", this::login);
+        app.post("/login", this::login);
+        app.post("/register", this::register);
         return app;
     }
 
@@ -35,26 +36,40 @@ public class SocialMediaController {
     private void exampleHandler(Context context) {
         context.json("sample text");
     }
-    private void login(Context context) {
+    private void login(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+    
         try {
-            // Parse JSON input to Account object
-            Account accountInput = context.bodyAsClass(Account.class);
-
-            // Verify user credentials
-            Account account = accountService.getAccount(accountInput.getUsername(), accountInput.getPassword());
+            Account account = mapper.readValue(context.body(), Account.class);
+            AccountService accountService = new AccountService();
+            Account loginAccount = accountService.getAccount(account);
             
-            // If credentials match, return account details with a 200 status code
-            if (account != null) {
-                context.status(200).json(account);
+            if (loginAccount == null) {
+                context.status(401);
             } else {
-                // If credentials don't match, return a 401 Unauthorized error
-                context.status(401).result("Invalid username or password");
+                context.json(mapper.writeValueAsString(loginAccount));
             }
-        } catch (Exception e) {
-            // If an error occurs during login, return 401 with an error message
-            context.status(401).result("Error during login: " + e.getMessage());
+            
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
     }
-
-
+    private void register(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+    
+        try {
+            Account account = mapper.readValue(context.body(), Account.class);
+            AccountService accountService = new AccountService();
+            Account regAccount = accountService.createAccount(account);
+            
+            if (regAccount == null) {
+                context.status(400);
+            } else {
+                context.json(mapper.writeValueAsString(regAccount));
+            }
+            
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -11,13 +11,13 @@ import java.sql.*;
 //delete account
 public class AccountDAO {
 
-    public Account getAccount(String username, String password) {
+    public Account getAccount(Account account) {
         Connection connection = ConnectionUtil.getConnection();
         try {
             String sql = "select * from Account where username = ? AND password = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, username);
-            ps.setString(2, password);
+            ps.setString(1, account.getUsername());
+            ps.setString(2, account.getPassword());
             
             ResultSet rs = ps.executeQuery();
             if(rs.next()) {
