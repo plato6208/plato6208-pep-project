@@ -4,7 +4,10 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 
 import Service.AccountService;
+import Service.MessageService;
 import Model.Account;
+import Model.Message;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 /**
@@ -26,16 +29,10 @@ public class SocialMediaController {
         Javalin app = Javalin.create();
         app.post("/login", this::login);
         app.post("/register", this::register);
+        app.post("/messages", this::createMessage);
         return app;
     }
 
-    /**
-     * This is an example handler for an example endpoint.
-     * @param context The Javalin Context object manages information about both the HTTP request and response.
-     */
-    private void exampleHandler(Context context) {
-        context.json("sample text");
-    }
     private void login(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
     
@@ -66,6 +63,24 @@ public class SocialMediaController {
                 context.status(400);
             } else {
                 context.json(mapper.writeValueAsString(regAccount));
+            }
+            
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+    private void createMessage(Context ctx) throws JsonProcessingException{
+        ObjectMapper mapper = new ObjectMapper();
+    
+        try {
+            Message message = mapper.readValue(ctx.body(), Message.class);
+            MessageService messageService = new MessageService();
+            Message m = messageService.createMessage(message);
+            
+            if (m == null) {
+                ctx.status(400);
+            } else {
+                ctx.json(mapper.writeValueAsString(m));
             }
             
         } catch (JsonProcessingException e) {
