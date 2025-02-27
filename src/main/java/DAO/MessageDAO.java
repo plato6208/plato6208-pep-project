@@ -56,22 +56,22 @@ public class MessageDAO {
     }
     public Message retriveByID(int id){
         Connection connection = ConnectionUtil.getConnection();
+        Message mes = new Message();
         try {
             String sql = "select * from Message where message_id = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Message mes = new Message(rs.getInt("message_id"),
+                mes = new Message(rs.getInt("message_id"),
                                             rs.getInt("posted_by"), 
                                             rs.getString("message_text"),
                                             rs.getLong("time_posted_epoch"));
-                return mes;
             }
         } catch (SQLException e){
             System.out.println("Message does not exist");
         }
-        return null;
+        return mes;
     }
     public Message deleteMessage(int id) {
         Connection connection = ConnectionUtil.getConnection();
@@ -137,7 +137,7 @@ public class MessageDAO {
         List<Message> messages = new ArrayList<>();
         Connection connection = ConnectionUtil.getConnection();
         try {
-            String sql = "Select * from message where posted_by = ?";
+            String sql = "Select * from Message where posted_by = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, posted_by);
             ResultSet rs = ps.executeQuery();
@@ -148,10 +148,9 @@ public class MessageDAO {
                                             rs.getLong("time_posted_epoch"));
                 messages.add(mes);
             }
-            return messages;
         } catch(SQLException e) {
             System.out.println("message not found");
         }
-        return null;
+        return messages;
     }
 }

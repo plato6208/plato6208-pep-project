@@ -42,6 +42,8 @@ public class MessageService {
     public Message deleteMessage(int id) {
         return messageDAO.deleteMessage(id);
     }
+
+    
     public Message updateMessage(String mes, int id) {
         if(mes.length() > 255 || mes.isBlank()) {
             return null;
@@ -51,7 +53,7 @@ public class MessageService {
 
     public List<Message> userIDMessage(int posted_by) {
         List<Message> mess = new ArrayList<>();
-        mess.addAll(messageDAO.userIDMessage(posted_by));
+        mess.addAll(messageDAO.userIDMessage(posted_by));   
         return mess;
     }
 }

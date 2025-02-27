@@ -1,5 +1,7 @@
 package Controller;
 
+import java.util.List;
+
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -31,6 +33,10 @@ public class SocialMediaController {
         app.post("/register", this::register);
         app.post("/messages", this::createMessage);
         app.get("/messages",this::retrieveAllMessages);
+        app.get("/accounts/{user}/messages",this::retrieveAllMessageUser);
+        ///messages/1
+        app.get("/messages/{message_id}",this::retrieveByMessageID);
+        app.put("/messages/{message_id}",this::deleteMessage);
         return app;
     }
 
@@ -79,7 +85,7 @@ public class SocialMediaController {
             Message m = messageService.createMessage(message);
             
             if (m == null) {
-                ctx.status(400);
+                ctx.status(200);
             } else {
                 ctx.json(mapper.writeValueAsString(m));
             }
@@ -91,5 +97,22 @@ public class SocialMediaController {
     private void retrieveAllMessages(Context ctx) throws JsonProcessingException{
         MessageService messageService = new MessageService();
         ctx.json(messageService.retriveAllMessages());
+    }
+    private void retrieveAllMessageUser(Context ctx) {
+            int userId = Integer.parseInt(ctx.pathParam("user"));
+            MessageService messageService = new MessageService();
+            ctx.json(messageService.userIDMessage(userId));
+    }
+
+    private void retrieveByMessageID(Context ctx) {
+        int message_id = Integer.parseInt(ctx.pathParam("message_id"));
+        MessageService messageService = new MessageService();
+        ctx.json(messageService.retriveByID(message_id));
+    }
+
+    private void deleteMessage(Context ctx) {
+        int message_id = Integer.parseInt(ctx.pathParam("message_id"));
+        MessageService messageService = new MessageService();
+        ctx.json(messageService.deleteMessage(message_id));
     }
 }
