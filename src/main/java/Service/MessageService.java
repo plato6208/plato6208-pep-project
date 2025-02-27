@@ -44,8 +44,8 @@ public class MessageService {
     }
 
     
-    public Message updateMessage(String mes, int id) {
-        if(mes.length() > 255 || mes.isBlank()) {
+    public Message updateMessage(Message mes, int id) {
+        if(mes.getMessage_text().length() > 255 || mes.getMessage_text().isEmpty()) {
             return null;
         } else 
             return messageDAO.updateMessage(mes, id);

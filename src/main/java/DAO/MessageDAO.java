@@ -100,14 +100,14 @@ public class MessageDAO {
         }
         return m;
     }
-    public Message updateMessage(String mes, int id){
+    public Message updateMessage(Message mes, int id){
         Message mess = null;
         Connection connection = ConnectionUtil.getConnection();
         try {
             //check to see if message exist
             String check  = "Select * from Message where message_id = ?";
             PreparedStatement ps1 = connection.prepareStatement(check);
-            ps1.setInt(1,id);
+            ps1.setInt(1, id);
             ResultSet rs1 = ps1.executeQuery();
             if(!rs1.next()) {
                 return null;
@@ -115,7 +115,7 @@ public class MessageDAO {
 
             String sql = "update from Message set message_text = ? where message_id = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, mes);
+            ps.setString(1, mes.getMessage_text());
             ps.setInt(2, id);
             int rowUpdated = ps.executeUpdate();
             if(rowUpdated > 0) {

@@ -18,10 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
 public class SocialMediaController {
-    private AccountService accountService;
-    public SocialMediaController() {
-        this.accountService = new AccountService();  // Initialize the account service
-    }
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
      * suite must receive a Javalin object from this method.
@@ -36,7 +32,8 @@ public class SocialMediaController {
         app.get("/accounts/{user}/messages",this::retrieveAllMessageUser);
         ///messages/1
         app.get("/messages/{message_id}",this::retrieveByMessageID);
-        app.put("/messages/{message_id}",this::deleteMessage);
+        app.delete("/messages/{message_id}",this::deleteMessage);
+        app.put("/messages/{message_id}", this::updateMessage);
         return app;
     }
 
@@ -114,5 +111,26 @@ public class SocialMediaController {
         int message_id = Integer.parseInt(ctx.pathParam("message_id"));
         MessageService messageService = new MessageService();
         ctx.json(messageService.deleteMessage(message_id));
+    }
+    private void updateMessage(Context ctx) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            Message message = mapper.readValue(ctx.body(), Message.class);
+        
+            MessageService messageService = new MessageService();
+            int message_id = Integer.parseInt(ctx.pathParam("message_id"));
+    
+            Message mes = messageService.updateMessage(message, message_id);
+              
+            if (mes == null) {
+                ctx.status(400);
+            } else {
+                ctx.json(mapper.writeValueAsString(mes));
+            }
+            
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 }
