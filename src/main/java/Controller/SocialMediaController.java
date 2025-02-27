@@ -85,7 +85,7 @@ public class SocialMediaController {
             Message m = messageService.createMessage(message);
             
             if (m == null) {
-                ctx.status(200);
+                ctx.status(400);
             } else {
                 ctx.json(mapper.writeValueAsString(m));
             }
