@@ -14,7 +14,25 @@ public class MessageDAO {
     //delete message identified by message id
     //update message text identified by its message id
     //retrieve all messages by particular user
-
+    public Message search(int id) {
+        Connection connection = ConnectionUtil.getConnection();
+        Message ret = new Message();
+        try {
+            String check  = "Select * from Message where message_id = ?";
+            PreparedStatement ps1 = connection.prepareStatement(check);
+            ps1.setInt(1,id);
+            ResultSet rs1 = ps1.executeQuery();
+            if(rs1.next()) {
+                ret = new Message(rs1.getInt("message_id"),
+                rs1.getInt("posted_by"),
+                rs1.getString("message_text"),
+                rs1.getLong("time_posted_epoch"));
+            }
+        }catch(SQLException e) {
+            System.out.println("message not found");
+        }
+            return ret;
+    }
     public Message createMessage(Message m){
         Connection connection = ConnectionUtil.getConnection();
         try {
@@ -75,20 +93,8 @@ public class MessageDAO {
     }
     public Message deleteMessage(int id) {
         Connection connection = ConnectionUtil.getConnection();
-        Message m = null;
+        Message m = search(id);
         try {
-            //check to see if message exist
-            String check  = "Select * from Message where message_id = ?";
-            PreparedStatement ps1 = connection.prepareStatement(check);
-            ps1.setInt(1,id);
-            ResultSet rs1 = ps1.executeQuery();
-            if(rs1.next()) {
-                m = new Message(rs1.getInt("message_id"),
-                rs1.getInt("posted_by"),
-                rs1.getString("message_text"),
-                rs1.getLong("time_posted_epoch"));
-            }
-
             if(m != null) {
                 String sql = "delete from Message where message_id = ?";
                 PreparedStatement ps = connection.prepareStatement(sql);
