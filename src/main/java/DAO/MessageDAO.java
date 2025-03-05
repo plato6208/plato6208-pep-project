@@ -113,24 +113,16 @@ public class MessageDAO {
         Connection connection = ConnectionUtil.getConnection();
         try {
             //check to see if message exist
-            Message m = search(id);
-            if (m == null) {
+            if (search(id) == null) {
                 return null;
             }
-
-            String sql = "update from Message set message_text = ? where message_id = ?";
+            String sql = "update Message set message_text = ? where message_id = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, mes.getMessage_text());
             ps.setInt(2, id);
             int rowUpdated = ps.executeUpdate();
             if(rowUpdated > 0) {
-                ResultSet rs = ps.executeQuery();
-                if(rs.next()) {
-                    mess = new Message(rs.getInt("message_id"),
-                    rs.getInt("posted_by"),
-                    rs.getString("message_text"),
-                    rs.getLong("time_posted_epoch"));
-                }
+                return search(id);
             }
         } catch(SQLException e) {
             System.out.println("message not found");
