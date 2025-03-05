@@ -104,33 +104,35 @@ public class SocialMediaController {
     private void retrieveByMessageID(Context ctx) {
         int message_id = Integer.parseInt(ctx.pathParam("message_id"));
         MessageService messageService = new MessageService();
-        ctx.json(messageService.retriveByID(message_id));
+        Message m = messageService.retriveByID(message_id);
+        if(m != null) {
+            ctx.json(m);
+        } else {
+            ctx.status(200);
+        }
     }
 
     private void deleteMessage(Context ctx) {
         int message_id = Integer.parseInt(ctx.pathParam("message_id"));
         MessageService messageService = new MessageService();
-        ctx.json(messageService.deleteMessage(message_id));
-    }
-    private void updateMessage(Context ctx) {
-        ObjectMapper mapper = new ObjectMapper();
-
-        try {
-            Message message = mapper.readValue(ctx.body(), Message.class);
-        
-            MessageService messageService = new MessageService();
-            int message_id = Integer.parseInt(ctx.pathParam("message_id"));
-    
-            Message mes = messageService.updateMessage(message, message_id);
-              
-            if (mes == null) {
-                ctx.status(400);
-            } else {
-                ctx.json(mapper.writeValueAsString(mes));
-            }
-            
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        Message m = messageService.deleteMessage(message_id);
+        if(m != null) {
+            ctx.json(m);
+        } else {
+            ctx.status(200);
         }
+    }
+    private void updateMessage(Context ctx) throws JsonProcessingException {
+        ObjectMapper map = new ObjectMapper();
+        MessageService messageService = new MessageService();
+        Message mes = map.readValue(ctx.body(), Message.class);
+        int message_id = Integer.parseInt(ctx.pathParam("message_id"));
+        Message updateMessage = messageService.updateMessage(mes, message_id);
+        if (updateMessage == null) {
+            ctx.status(400);
+        } else {
+            ctx.json(map.writeValueAsString(updateMessage));
+        }
+
     }
 }

@@ -27,11 +27,12 @@ public class MessageDAO {
                 rs1.getInt("posted_by"),
                 rs1.getString("message_text"),
                 rs1.getLong("time_posted_epoch"));
+                return ret;
             }
         }catch(SQLException e) {
             System.out.println("message not found");
         }
-            return ret;
+            return null;
     }
     public Message createMessage(Message m){
         Connection connection = ConnectionUtil.getConnection();
@@ -85,11 +86,12 @@ public class MessageDAO {
                                             rs.getInt("posted_by"), 
                                             rs.getString("message_text"),
                                             rs.getLong("time_posted_epoch"));
+                return mes;
             }
         } catch (SQLException e){
             System.out.println("Message does not exist");
         }
-        return mes;
+        return null;
     }
     public Message deleteMessage(int id) {
         Connection connection = ConnectionUtil.getConnection();
@@ -111,11 +113,8 @@ public class MessageDAO {
         Connection connection = ConnectionUtil.getConnection();
         try {
             //check to see if message exist
-            String check  = "Select * from Message where message_id = ?";
-            PreparedStatement ps1 = connection.prepareStatement(check);
-            ps1.setInt(1, id);
-            ResultSet rs1 = ps1.executeQuery();
-            if(!rs1.next()) {
+            Message m = search(id);
+            if (m == null) {
                 return null;
             }
 
