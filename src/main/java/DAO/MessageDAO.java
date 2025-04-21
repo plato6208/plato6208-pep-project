@@ -6,7 +6,6 @@ import Util.ConnectionUtil;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import io.javalin.Javalin;
 
 public class MessageDAO {
     //helper function that searches for a message given an ID and returns message if found null if not

@@ -6,9 +6,7 @@ import Util.ConnectionUtil;
 
 import java.sql.*;
 
-//create an account
-//search for an account
-//delete account
+
 public class AccountDAO {
 
     public Account getAccount(Account account) {
